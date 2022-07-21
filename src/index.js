@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./components/App."; //why this works? xd
+import App from "./components/App."; //why this works? xd but not without the las period (.)
 
 const root = ReactDOM.createRoot(
    document.getElementById("root")
