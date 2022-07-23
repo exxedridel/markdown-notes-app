@@ -14,8 +14,8 @@ const App = () => {
   );
 
   React.useEffect(() => {
-    localStorage.setItem("notes", JSON.stringify(notes))
-  }, [notes])
+    localStorage.setItem("notes", JSON.stringify(notes));
+  }, [notes]);
 
   function createNewNote() {
     const newNote = {
@@ -27,13 +27,33 @@ const App = () => {
   }
 
   function updateNote(event) {
-    setNotes((oldNotes) =>
-      oldNotes.map((oldNote) => {
-        return oldNote.id === currentNoteId
-          ? { ...oldNote, body: event.target.value }
-          : oldNote;
-      })
-    );
+    // Put the most recently-modified note at the top
+    setNotes((oldNotes) => {
+      const newArray = [];
+      for (let i = 0; i < oldNotes.length; i++) {
+        const oldNote = oldNotes[i];
+        if (oldNote.id === currentNoteId) {
+          newArray.unshift({ ...oldNote, body: event.target.value });
+        } else {
+          newArray.push(oldNote);
+        }
+      }
+      return newArray;
+    });
+    // This not rearrange the notes
+    // setNotes((oldNotes) =>
+    //   oldNotes.map((oldNote) => {
+    //     return oldNote.id === currentNoteId
+    //       ? { ...oldNote, body: event.target.value }
+    //       : oldNote;
+    //   })
+    // );
+  }
+
+  function deleteNote(event, noteId) {
+    event.stopPropagation();
+    // If the condition is true (ids matches) will not include that note in the new .filter array
+    setNotes(oldNotes => oldNotes.filter(note => note.id !== noteId))
   }
 
   function findCurrentNote() {
@@ -53,12 +73,10 @@ const App = () => {
             currentNote={findCurrentNote()}
             setCurrentNoteId={setCurrentNoteId}
             newNote={createNewNote}
+            deleteNote={deleteNote}
           />
           {currentNoteId && notes.length > 0 && (
-            <Editor 
-              currentNote={findCurrentNote()} 
-              updateNote={updateNote} 
-            />
+            <Editor currentNote={findCurrentNote()} updateNote={updateNote} />
           )}
         </Split>
       ) : (
